@@ -60,24 +60,18 @@ const createMovie = async (req, res, next) => {
   try {
     const {
       title,
-      description,
       genre,
       language,
-      duration_minutes,
-      release_date,
-      rating,
-      poster_url
+      duration,
+      release_date
     } = req.body;
 
     const newMovie = await Movie.create({
       title,
-      description,
       genre,
       language,
-      duration_minutes,
-      release_date,
-      rating,
-      poster_url
+      duration,
+      release_date
     });
 
     res.status(201).json({
@@ -101,7 +95,7 @@ const updateMovie = async (req, res, next) => {
 
     // Only pass defined fields to update method
     const updateData = {};
-    const allowedFields = ['title', 'description', 'genre', 'language', 'duration_minutes', 'release_date', 'rating', 'poster_url'];
+    const allowedFields = ['title', 'genre', 'language', 'duration', 'release_date'];
 
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) {

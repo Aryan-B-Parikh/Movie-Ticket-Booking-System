@@ -8,8 +8,8 @@ class Movie {
   // Returns array of movies with pagination support
   static async findAll(filters = {}) {
     let sql = `
-      SELECT movie_id, title, description, duration_minutes as duration, genre, language,
-             release_date, rating, poster_url, created_at, updated_at
+      SELECT movie_id, title, duration as duration, genre, language,
+             release_date, created_at, updated_at
       FROM Movies
       WHERE is_deleted = FALSE
     `;
@@ -55,8 +55,8 @@ class Movie {
   // Find movie by ID (active movies only)
   static async findById(movieId) {
     const sql = `
-      SELECT movie_id, title, description, duration_minutes as duration, genre, language,
-             release_date, rating, poster_url, created_at, updated_at
+      SELECT movie_id, title, duration as duration, genre, language,
+             release_date, created_at, updated_at
       FROM Movies
       WHERE movie_id = ? AND is_deleted = FALSE
     `;
@@ -70,13 +70,10 @@ class Movie {
   static async create(movieData) {
     const {
       title,
-      description,
-      duration_minutes,
+      duration,
       genre,
       language,
-      release_date,
-      rating,
-      poster_url
+      release_date
     } = movieData;
 
     // Check if movie with same title already exists (case insensitive)
@@ -91,14 +88,12 @@ class Movie {
 
     // Insert new movie - using prepared statement to prevent SQL injection
     const sql = `
-      INSERT INTO Movies (title, description, duration_minutes, genre, language,
-                         release_date, rating, poster_url)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO Movies (title, duration, genre, language, release_date)
+      VALUES (?, ?, ?, ?, ?)
     `;
 
     const result = await query(sql, [
-      title, description, duration_minutes, genre, language,
-      release_date, rating, poster_url
+      title, duration, genre, language, release_date
     ]);
 
     // Return newly created movie
@@ -129,7 +124,7 @@ class Movie {
     const updateFields = [];
     const params = [];
 
-    const allowedFields = ['title', 'description', 'duration_minutes', 'genre', 'language', 'release_date', 'rating', 'poster_url'];
+    const allowedFields = ['title', 'duration', 'genre', 'language', 'release_date'];
 
     allowedFields.forEach(field => {
       if (movieData[field] !== undefined) {
@@ -198,10 +193,10 @@ class Movie {
   // Search movies by title or genre
   static async search(searchQuery) {
     const sql = `
-      SELECT movie_id, title, description, duration_minutes as duration, genre, language,
-             release_date, rating, poster_url, created_at, updated_at
+      SELECT movie_id, title, duration, genre, language,
+             release_date, created_at, updated_at
       FROM Movies
-      WHERE (title LIKE ? OR genre LIKE ? OR description LIKE ?)
+      WHERE (title LIKE ? OR genre LIKE ?)
       AND is_deleted = FALSE
       ORDER BY
         CASE
@@ -225,8 +220,8 @@ class Movie {
   // Get only active (non-deleted) movies
   static async findActive() {
     const sql = `
-      SELECT movie_id, title, description, duration_minutes as duration, genre, language,
-             release_date, rating, poster_url, created_at, updated_at
+      SELECT movie_id, title, duration, genre, language,
+             release_date, created_at, updated_at
       FROM Movies
       WHERE is_deleted = FALSE
       ORDER BY created_at DESC
@@ -238,8 +233,8 @@ class Movie {
   // Get movies by genre
   static async findByGenre(genre) {
     const sql = `
-      SELECT movie_id, title, description, duration_minutes as duration, genre, language,
-             release_date, rating, poster_url, created_at, updated_at
+      SELECT movie_id, title, duration, genre, language,
+             release_date, created_at, updated_at
       FROM Movies
       WHERE genre = ? AND is_deleted = FALSE
       ORDER BY created_at DESC
@@ -251,8 +246,8 @@ class Movie {
   // Get movies by language
   static async findByLanguage(language) {
     const sql = `
-      SELECT movie_id, title, description, duration_minutes as duration, genre, language,
-             release_date, rating, poster_url, created_at, updated_at
+      SELECT movie_id, title, duration, genre, language,
+             release_date, created_at, updated_at
       FROM Movies
       WHERE language = ? AND is_deleted = FALSE
       ORDER BY created_at DESC
