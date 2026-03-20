@@ -48,6 +48,26 @@ app.get('/health', (req, res) => {
 
 // API routes
 const API_PREFIX = process.env.API_PREFIX || '/api';
+
+// Root API endpoint
+app.get(`${API_PREFIX}`, (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Movie Ticket Booking System API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      auth: `${API_PREFIX}/auth`,
+      movies: `${API_PREFIX}/movies`,
+      theatres: `${API_PREFIX}/theatres`,
+      screens: `${API_PREFIX}/screens`,
+      shows: `${API_PREFIX}/shows`,
+      bookings: `${API_PREFIX}/bookings`,
+      users: `${API_PREFIX}/users`
+    },
+    timestamp: new Date().toISOString()
+  });
+});
 app.use(`${API_PREFIX}/auth`, authRoutes);
 app.use(`${API_PREFIX}/bookings`, bookingRoutes);
 app.use(`${API_PREFIX}/users`, userRoutes);
