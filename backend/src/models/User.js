@@ -9,7 +9,7 @@ class User {
   // Returns user object or null if not found
   static async findByEmail(email) {
     const sql = `
-      SELECT user_id, username, email, password_hash, role, created_at, updated_at
+      SELECT user_id, name, email, password_hash, role, created_at, updated_at
       FROM Users
       WHERE email = ?
     `;
@@ -21,7 +21,7 @@ class User {
   // Find user by ID
   static async findById(userId) {
     const sql = `
-      SELECT user_id, username, email, role, created_at, updated_at
+      SELECT user_id, name, email, role, created_at, updated_at
       FROM Users
       WHERE user_id = ?
     `;
@@ -33,7 +33,7 @@ class User {
   // Create new user with hashed password
   // Input validation should be done before calling this method
   static async create(userData) {
-    const { username, email, password, role = 'USER' } = userData;
+    const { name, email, password, role = 'USER' } = userData;
 
     // Check if user already exists
     const existingUser = await this.findByEmail(email);
@@ -47,16 +47,16 @@ class User {
 
     // Insert new user - using prepared statement to prevent SQL injection
     const sql = `
-      INSERT INTO Users (username, email, password_hash, role)
+      INSERT INTO Users (name, email, password_hash, role)
       VALUES (?, ?, ?, ?)
     `;
 
-    const result = await query(sql, [username, email, passwordHash, role]);
+    const result = await query(sql, [name, email, passwordHash, role]);
 
     // Return newly created user (without password)
     return {
       user_id: result.insertId,
-      username,
+      name,
       email,
       role
     };
@@ -92,15 +92,15 @@ class User {
 
   // Update user profile
   static async updateProfile(userId, updateData) {
-    const { username } = updateData;
+    const { name } = updateData;
 
     const sql = `
       UPDATE Users
-      SET username = ?, updated_at = CURRENT_TIMESTAMP
+      SET name = ?, updated_at = CURRENT_TIMESTAMP
       WHERE user_id = ?
     `;
 
-    await query(sql, [username, userId]);
+    await query(sql, [name, userId]);
     return await this.findById(userId);
   }
 }

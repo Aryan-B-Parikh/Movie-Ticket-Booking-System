@@ -5,11 +5,11 @@ const AppError = require('../utils/AppError');
 // POST /api/auth/register
 const register = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     // Create new user (password hashing handled in model)
     const newUser = await User.create({
-      username,
+      name,
       email,
       password,
       role: 'USER' // Default role for registration
@@ -22,7 +22,7 @@ const register = async (req, res, next) => {
       data: {
         user: {
           user_id: newUser.user_id,
-          username: newUser.username,
+          name: newUser.name,
           email: newUser.email,
           role: newUser.role
         }
@@ -64,7 +64,7 @@ const login = async (req, res, next) => {
       data: {
         user: {
           user_id: user.user_id,
-          username: user.username,
+          name: user.name,
           email: user.email,
           role: user.role
         }
