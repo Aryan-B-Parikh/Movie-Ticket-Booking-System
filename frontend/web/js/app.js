@@ -96,7 +96,8 @@ async function loadMovies() {
 
     try {
         const response = await api.getMovies();
-        currentMovies = response.data || response.movies || [];
+        // API returns { status, data: { movies: [...] } }
+        currentMovies = response.data?.movies || response.movies || [];
         displayMovies(currentMovies);
     } catch (error) {
         console.error('Error loading movies:', error);
@@ -129,13 +130,11 @@ function displayMovies(movies) {
                 <h3 class="movie-title">${movie.title}</h3>
                 <div class="movie-meta">
                     <span class="movie-genre">${movie.genre}</span>
-                    <span class="movie-duration">${movie.duration_minutes} min</span>
+                    <span class="movie-duration">${movie.duration} min</span>
                 </div>
                 <div class="movie-meta">
                     <span class="movie-language">${movie.language}</span>
-                    <span class="movie-rating">${movie.rating || 'NR'}</span>
                 </div>
-                <p class="movie-description">${movie.description}</p>
             </div>
         </div>
     `).join('');
@@ -175,7 +174,7 @@ async function handleFilterChange() {
 
     try {
         const response = await api.getMovies(filters);
-        const movies = response.data || response.movies || [];
+        const movies = response.data?.movies || response.movies || [];
         displayMovies(movies);
     } catch (error) {
         console.error('Error filtering movies:', error);
@@ -188,7 +187,7 @@ async function handleFilterChange() {
 async function openMovieDetails(movieId) {
     try {
         const response = await api.getMovie(movieId);
-        const movie = response.data || response.movie;
+        const movie = response.data?.movie || response.movie || response.data;
 
         selectedMovie = movie;
         displayMovieDetails(movie);
@@ -209,10 +208,6 @@ function displayMovieDetails(movie) {
 
     movieDetails.innerHTML = `
         <div class="movie-details">
-            <img src="${movie.poster_url || 'https://via.placeholder.com/200x300?text=No+Poster'}"
-                 alt="${movie.title}"
-                 class="movie-poster-large"
-                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Poster'">
             <div class="movie-info-large">
                 <h3>${movie.title}</h3>
                 <div class="movie-detail-row">
@@ -225,19 +220,11 @@ function displayMovieDetails(movie) {
                 </div>
                 <div class="movie-detail-row">
                     <span class="movie-detail-label">Duration:</span>
-                    <span>${movie.duration_minutes} minutes</span>
-                </div>
-                <div class="movie-detail-row">
-                    <span class="movie-detail-label">Rating:</span>
-                    <span>${movie.rating || 'Not Rated'}</span>
+                    <span>${movie.duration} minutes</span>
                 </div>
                 <div class="movie-detail-row">
                     <span class="movie-detail-label">Release Date:</span>
                     <span>${formatDate(movie.release_date)}</span>
-                </div>
-                <div style="margin-top: 1rem;">
-                    <strong>Description:</strong>
-                    <p style="margin-top: 0.5rem; line-height: 1.6;">${movie.description}</p>
                 </div>
                 <div style="margin-top: 2rem;">
                     <button class="btn-primary" onclick="showMovieShows(${movie.movie_id})">
@@ -254,7 +241,7 @@ async function loadMovieShows(movieId) {
         const response = await api.getMovieWithShows(movieId);
         const movieData = response.data || response;
 
-        if (movieData.shows && movieData.shows.length > 0) {
+        if (movieData && movieData.shows && movieData.shows.length > 0) {
             currentMovieShows = movieData.shows;
         } else {
             currentMovieShows = [];
@@ -281,7 +268,7 @@ async function openShowModal(movieId) {
     try {
         const response = await api.getMovieWithShows(movieId);
         const movieData = response.data || response;
-        const shows = movieData.shows || [];
+        const shows = movieData?.shows || [];
 
         displayShows(shows, movieData);
 
@@ -341,7 +328,7 @@ function displayShows(shows, movieData) {
 async function selectShow(showId) {
     try {
         const response = await api.getShow(showId);
-        selectedShow = response.data || response.show;
+        selectedShow = response.data?.show || response.show || response.data;
 
         closeShowModal();
         await openSeatModal(showId);
@@ -355,7 +342,7 @@ async function selectShow(showId) {
 async function openSeatModal(showId) {
     try {
         const response = await api.getAvailableSeats(showId);
-        availableSeats = response.data || response.seats || [];
+        availableSeats = response.data?.seats || response.seats || response.data || [];
 
         selectedSeats = [];
         seatPrices = {};
