@@ -1,0 +1,944 @@
+{
+  "info": {
+    "name": "Movie Ticket Booking System API",
+    "description": "Complete API collection for Movie Ticket Booking System with authentication, movies, theatres, shows, and booking management.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "movie_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "show_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"test_user\",\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has required fields\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('success');",
+                  "    pm.expect(response).to.have.property('data');",
+                  "    pm.expect(response.data).to.have.property('user');",
+                  "    pm.expect(response.data).to.have.property('token');",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.data.token);",
+                  "    pm.collectionVariables.set('user_id', response.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Login successful\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.be.true;",
+                  "    pm.expect(response.data.token).to.be.a('string');",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.data.token);",
+                  "    pm.collectionVariables.set('user_id', response.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('admin_token', response.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Movies",
+      "item": [
+        {
+          "name": "Get All Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["movies"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has movies array\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('movies');",
+                  "    pm.expect(response.data.movies).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/search?q=batman",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "batman"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Movie Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/{{movie_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "{{movie_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Movie details retrieved\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('movie');",
+                  "    pm.expect(response.data.movie).to.have.property('id');",
+                  "    pm.expect(response.data.movie).to.have.property('title');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Movie (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Movie\",\n  \"description\": \"This is a test movie for API testing\",\n  \"genre\": \"ACTION\",\n  \"language\": \"English\",\n  \"duration_minutes\": 120,\n  \"release_date\": \"2026-04-01\",\n  \"rating\": \"PG-13\",\n  \"poster_url\": \"https://example.com/test-poster.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/movies",
+              "host": ["{{base_url}}"],
+              "path": ["movies"]
+            }
+          }
+        },
+        {
+          "name": "Filter Movies by Genre",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies?genre=ACTION&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["movies"],
+              "query": [
+                {
+                  "key": "genre",
+                  "value": "ACTION"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Theatres",
+      "item": [
+        {
+          "name": "Get All Theatres",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/theatres",
+              "host": ["{{base_url}}"],
+              "path": ["theatres"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has theatres array\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('theatres');",
+                  "    pm.expect(response.data.theatres).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Theatre Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/theatres/1",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Theatre (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Cinema\",\n  \"location\": \"123 Test Street, Test Area\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"pincode\": \"400001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/theatres",
+              "host": ["{{base_url}}"],
+              "path": ["theatres"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shows",
+      "item": [
+        {
+          "name": "Get All Shows",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/shows",
+              "host": ["{{base_url}}"],
+              "path": ["shows"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has shows array\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('shows');",
+                  "    pm.expect(response.data.shows).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Upcoming Shows",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/shows/upcoming?days=7",
+              "host": ["{{base_url}}"],
+              "path": ["shows", "upcoming"],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "7"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Show Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/shows/{{show_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["shows", "{{show_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Available Seats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/shows/{{show_id}}/seats",
+              "host": ["{{base_url}}"],
+              "path": ["shows", "{{show_id}}", "seats"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Seat availability data present\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('seats');",
+                  "    pm.expect(response.data).to.have.property('summary');",
+                  "    pm.expect(response.data.summary).to.have.property('total_seats');",
+                  "    pm.expect(response.data.summary).to.have.property('available_seats');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter Shows by Movie",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/shows?movieId={{movie_id}}&date=2026-03-20",
+              "host": ["{{base_url}}"],
+              "path": ["shows"],
+              "query": [
+                {
+                  "key": "movieId",
+                  "value": "{{movie_id}}"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-03-20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Show (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"movie_id\": {{movie_id}},\n  \"screen_id\": 1,\n  \"show_time\": \"2026-03-22T20:00:00Z\",\n  \"price\": 300.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shows",
+              "host": ["{{base_url}}"],
+              "path": ["shows"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings (CRITICAL)",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showId\": {{show_id}},\n  \"seatIds\": [1, 2],\n  \"paymentMethod\": \"CREDIT_CARD\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking creation status\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 409]); // Success or conflict",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    pm.test(\"Booking created successfully\", function () {",
+                  "        const response = pm.response.json();",
+                  "        pm.expect(response.success).to.be.true;",
+                  "        pm.expect(response.data).to.have.property('booking');",
+                  "        pm.expect(response.data.booking).to.have.property('id');",
+                  "        pm.expect(response.data.booking).to.have.property('status', 'CONFIRMED');",
+                  "        pm.collectionVariables.set('booking_id', response.data.booking.id);",
+                  "    });",
+                  "}",
+                  "",
+                  "if (pm.response.code === 409) {",
+                  "    pm.test(\"Booking conflict handled properly\", function () {",
+                  "        const response = pm.response.json();",
+                  "        pm.expect(response.success).to.be.false;",
+                  "        pm.expect(response.error.code).to.eql('BOOKING_CONFLICT');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/bookings/my-bookings?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", "my-bookings"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"User bookings retrieved\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('bookings');",
+                  "    pm.expect(response.data.bookings).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Booking Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/bookings/{{booking_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", "{{booking_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Booking details complete\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.data).to.have.property('booking');",
+                  "    pm.expect(response.data.booking).to.have.property('user');",
+                  "    pm.expect(response.data.booking).to.have.property('show');",
+                  "    pm.expect(response.data.booking).to.have.property('seats');",
+                  "    pm.expect(response.data.booking).to.have.property('payment');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/bookings/{{booking_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", "{{booking_id}}", "cancel"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cancellation response\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 400, 409]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Booking cancelled successfully\", function () {",
+                  "        const response = pm.response.json();",
+                  "        pm.expect(response.success).to.be.true;",
+                  "        pm.expect(response.data.booking.status).to.eql('CANCELLED');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Bookings (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/bookings?page=1&limit=25",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "25"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Scenarios",
+      "item": [
+        {
+          "name": "Unauthorized Request",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/bookings/my-bookings",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", "my-bookings"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response format\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.be.false;",
+                  "    pm.expect(response).to.have.property('error');",
+                  "    pm.expect(response.error).to.have.property('code');",
+                  "    pm.expect(response.error).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Movie ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/movies/99999",
+              "host": ["{{base_url}}"],
+              "path": ["movies", "99999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Resource not found error\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.error.code).to.eql('RESOURCE_NOT_FOUND');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Registration Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jo\",\n  \"email\": \"invalid-email\",\n  \"password\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Validation error response\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.error.code).to.eql('VALIDATION_ERROR');",
+                  "    pm.expect(response.error).to.have.property('details');",
+                  "    pm.expect(response.error.details).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Concurrent Booking Conflict",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showId\": {{show_id}},\n  \"seatIds\": [1],\n  \"paymentMethod\": \"CREDIT_CARD\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking response\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 409) {",
+                  "    pm.test(\"Conflict properly handled\", function () {",
+                  "        const response = pm.response.json();",
+                  "        pm.expect(response.error.code).to.eql('BOOKING_CONFLICT');",
+                  "        pm.expect(response.error).to.have.property('details');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["health"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Server is running\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.status).to.eql('success');",
+                  "    pm.expect(response.message).to.eql('Server is running');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
