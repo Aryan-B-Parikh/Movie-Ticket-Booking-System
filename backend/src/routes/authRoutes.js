@@ -7,12 +7,12 @@ const router = express.Router();
 
 // Validation rules for registration
 const registerValidation = [
-  body('username')
+  body('name')
     .trim()
     .isLength({ min: 3, max: 50 })
-    .withMessage('Username must be between 3 and 50 characters')
-    .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Username can only contain letters, numbers, and underscores'),
+    .withMessage('Name must be between 3 and 50 characters')
+    .matches(/^[a-zA-Z\s]+$/)
+    .withMessage('Name can only contain letters and spaces'),
 
   body('email')
     .trim()
