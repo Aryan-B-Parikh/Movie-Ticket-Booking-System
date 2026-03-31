@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Movie Ticket Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260330a">
+</head>
+<body>
+  <main class="page-shell dashboard-shell">
+    <header class="card topbar">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p id="adminWelcomeText" class="subtitle">Show Management</p>
+      </div>
+      <button id="logoutBtn" class="btn secondary" type="button">Logout</button>
+    </header>
+
+    <section class="card panel">
+      <h3>Manage Movies</h3>
+
+      <div class="field-grid three-col">
+        <div class="input-row">
+          <label for="adminMovieTitle">Title</label>
+          <input id="adminMovieTitle" type="text" placeholder="Movie title">
+        </div>
+        <div class="input-row">
+          <label for="adminMovieDuration">Duration (minutes)</label>
+          <input id="adminMovieDuration" type="number" min="30" max="400" step="1" placeholder="120">
+        </div>
+        <div class="input-row">
+          <label for="adminMovieGenre">Genre</label>
+          <input id="adminMovieGenre" type="text" placeholder="Drama">
+        </div>
+      </div>
+
+      <div class="field-grid three-col">
+        <div class="input-row">
+          <label for="adminMovieLanguage">Language</label>
+          <input id="adminMovieLanguage" type="text" placeholder="English">
+        </div>
+        <div class="input-row">
+          <label for="adminMovieCertificate">Certificate</label>
+          <input id="adminMovieCertificate" type="text" placeholder="UA">
+        </div>
+        <div class="input-row">
+          <label for="adminMovieRelease">Release Date</label>
+          <input id="adminMovieRelease" type="date">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="movieSaveBtn" class="btn primary" type="button">Add Movie</button>
+        <button id="movieResetBtn" class="btn secondary" type="button">Reset Form</button>
+        <button id="movieRefreshBtn" class="btn secondary" type="button">Refresh Movies</button>
+      </div>
+      <p id="movieFormState" class="status-text">Creating new movie.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Duration</th>
+              <th>Genre</th>
+              <th>Language</th>
+              <th>Certificate</th>
+              <th>Release Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminMoviesBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h3>Manage Theaters</h3>
+
+      <div class="field-grid two-col">
+        <div class="input-row">
+          <label for="adminTheaterName">Name</label>
+          <input id="adminTheaterName" type="text" placeholder="CineMax Downtown">
+        </div>
+        <div class="input-row">
+          <label for="adminTheaterLocation">Location</label>
+          <input id="adminTheaterLocation" type="text" placeholder="Ahmedabad">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="theaterSaveBtn" class="btn primary" type="button">Add Theater</button>
+        <button id="theaterResetBtn" class="btn secondary" type="button">Reset Form</button>
+        <button id="theaterRefreshBtn" class="btn secondary" type="button">Refresh Theaters</button>
+      </div>
+      <p id="theaterFormState" class="status-text">Creating new theater.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminTheatersBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h3>Manage Screens</h3>
+
+      <div class="field-grid three-col">
+        <div class="input-row">
+          <label for="adminScreenTheater">Theater</label>
+          <select id="adminScreenTheater"></select>
+        </div>
+        <div class="input-row">
+          <label for="adminScreenName">Screen Name</label>
+          <input id="adminScreenName" type="text" placeholder="Screen 1">
+        </div>
+        <div class="input-row">
+          <label for="adminScreenCapacity">Capacity</label>
+          <input id="adminScreenCapacity" type="number" min="1" max="130" step="1" placeholder="10">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="screenSaveBtn" class="btn primary" type="button">Add Screen</button>
+        <button id="screenResetBtn" class="btn secondary" type="button">Reset Form</button>
+        <button id="screenRefreshBtn" class="btn secondary" type="button">Refresh Screens</button>
+      </div>
+      <p id="screenFormState" class="status-text">Creating new screen.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Screen Name</th>
+              <th>Theater</th>
+              <th>Capacity</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminScreensBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h3>Manage Shows</h3>
+
+      <div class="field-grid three-col">
+        <div class="input-row">
+          <label for="adminMovieSelect">Movie</label>
+          <select id="adminMovieSelect"></select>
+        </div>
+        <div class="input-row">
+          <label for="adminScreenSelect">Screen</label>
+          <select id="adminScreenSelect"></select>
+        </div>
+        <div class="input-row">
+          <label for="adminStatus">Status</label>
+          <select id="adminStatus">
+            <option value="SCHEDULED">SCHEDULED</option>
+            <option value="CANCELLED">CANCELLED</option>
+            <option value="COMPLETED">COMPLETED</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-grid two-col">
+        <div class="input-row">
+          <label for="adminShowTime">Show Time</label>
+          <input id="adminShowTime" type="datetime-local">
+        </div>
+        <div class="input-row">
+          <label for="adminBasePrice">Base Price</label>
+          <input id="adminBasePrice" type="number" min="1" step="0.01" placeholder="250.00">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="saveShowBtn" class="btn primary" type="button">Add Show</button>
+        <button id="resetShowBtn" class="btn secondary" type="button">Reset Form</button>
+        <button id="refreshShowsBtn" class="btn secondary" type="button">Refresh Shows</button>
+        <button id="verifyBtn" class="btn secondary" type="button">Verify DB</button>
+      </div>
+      <p id="adminFormState" class="status-text">Creating new show.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Movie</th>
+              <th>Screen</th>
+              <th>Show Time</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminShowsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h3>Runtime Status</h3>
+      <div class="metric-grid">
+        <div class="metric-item">
+          <span class="metric-label">Tables</span>
+          <span id="metricTables" class="metric-value">-</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Available Seats</span>
+          <span id="metricAvailable" class="metric-value">-</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Booked Seats</span>
+          <span id="metricBooked" class="metric-value">-</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Booking Status</span>
+          <span id="metricBookingStatus" class="metric-value">-</span>
+        </div>
+      </div>
+
+      <div>
+        <h4>Operation Log</h4>
+        <pre id="opLog" class="source-view">Waiting for actions...</pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="admin.js?v=20260331a"></script>
+</body>
+</html>

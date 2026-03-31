@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Ticket Booking Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260330a">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="card login-card">
+      <h1>Movie Ticket Booking</h1>
+      <p class="subtitle">Sign in as User or Admin to continue.</p>
+
+      <div class="tab-row">
+        <button id="userTabBtn" class="tab-btn active" type="button">User</button>
+        <button id="adminTabBtn" class="tab-btn" type="button">Admin</button>
+      </div>
+
+      <div id="userLoginPanel" class="login-panel">
+        <div class="input-row">
+          <label for="userLoginSelect">Existing User</label>
+          <select id="userLoginSelect"></select>
+        </div>
+        <button id="userLoginBtn" class="btn primary" type="button">Continue as User</button>
+
+        <div class="divider"></div>
+        <h3>Create New User</h3>
+        <div class="input-row">
+          <label for="newUserName">Full Name</label>
+          <input id="newUserName" type="text" placeholder="Enter full name">
+        </div>
+        <div class="input-row">
+          <label for="newUserEmail">Email</label>
+          <input id="newUserEmail" type="email" placeholder="name@example.com">
+        </div>
+        <div class="input-row">
+          <label for="newUserPhone">Phone (optional)</label>
+          <input id="newUserPhone" type="text" placeholder="9876543210">
+        </div>
+        <button id="createUserBtn" class="btn secondary" type="button">Create User</button>
+      </div>
+
+      <div id="adminLoginPanel" class="login-panel hidden">
+        <div class="input-row">
+          <label for="adminUsername">Username</label>
+          <input id="adminUsername" type="text" value="admin">
+        </div>
+        <div class="input-row">
+          <label for="adminPassword">Password</label>
+          <input id="adminPassword" type="password" placeholder="Enter admin password">
+        </div>
+        <button id="adminLoginBtn" class="btn primary" type="button">Continue as Admin</button>
+      </div>
+
+      <p id="loginMessage" class="status-text">Select a role and sign in.</p>
+    </section>
+  </main>
+
+  <script src="login.js?v=20260330a"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Movie Ticket Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260330a">
+</head>
+<body>
+  <main class="page-shell dashboard-shell">
+    <header class="card topbar">
+      <div>
+        <h1>User Dashboard</h1>
+        <p id="welcomeText" class="subtitle">Welcome</p>
+      </div>
+      <button id="logoutBtn" class="btn secondary" type="button">Logout</button>
+    </header>
+
+    <section class="card panel">
+      <h3>Book Tickets</h3>
+
+      <div class="field-grid two-col">
+        <div class="input-row">
+          <label for="movieSelect">Movie</label>
+          <select id="movieSelect"></select>
+        </div>
+        <div class="input-row">
+          <label for="showSelect">Show</label>
+          <select id="showSelect"></select>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="loadSeatsBtn" class="btn secondary" type="button">Load Seats</button>
+      </div>
+
+      <div id="seatList" class="seat-list"></div>
+      <p id="seatSummary" class="subtitle">No seats selected</p>
+
+      <div class="action-row">
+        <button id="createBookingBtn" class="btn primary" type="button" disabled>Create Booking</button>
+      </div>
+
+      <div class="field-grid three-col">
+        <div class="input-row">
+          <label for="bookingIdInput">Booking ID</label>
+          <input id="bookingIdInput" type="number" min="1" placeholder="Booking ID">
+        </div>
+        <div class="input-row">
+          <label for="paymentMethod">Payment Method</label>
+          <select id="paymentMethod">
+            <option value="UPI">UPI</option>
+            <option value="CARD">CARD</option>
+            <option value="NETBANKING">NETBANKING</option>
+            <option value="WALLET">WALLET</option>
+            <option value="CASH">CASH</option>
+          </select>
+        </div>
+        <div class="input-row">
+          <label for="txnRef">Transaction Ref</label>
+          <input id="txnRef" type="text" placeholder="TXN-UI-1001">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="loadBookingBtn" class="btn secondary" type="button">Load Booking</button>
+        <button id="markPaymentBtn" class="btn primary" type="button">Mark Payment Success</button>
+        <button id="cancelBookingBtn" class="btn danger" type="button">Cancel Booking</button>
+        <button id="verifyBtn" class="btn secondary" type="button">Verify DB</button>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h3>Runtime Status</h3>
+      <div class="metric-grid">
+        <div class="metric-item">
+          <span class="metric-label">Tables</span>
+          <span id="metricTables" class="metric-value">-</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Available Seats</span>
+          <span id="metricAvailable" class="metric-value">-</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Booked Seats</span>
+          <span id="metricBooked" class="metric-value">-</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Booking Status</span>
+          <span id="metricBookingStatus" class="metric-value">-</span>
+        </div>
+      </div>
+
+      <div class="field-grid two-col">
+        <div>
+          <h4>Current Booking JSON</h4>
+          <pre id="bookingJson" class="source-view">No booking loaded yet.</pre>
+        </div>
+        <div>
+          <h4>Operation Log</h4>
+          <pre id="opLog" class="source-view">Waiting for actions...</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="user.js?v=20260331a"></script>
+</body>
+</html>
